@@ -2,13 +2,126 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
-        <title>Otsikko</title>
+        <title>Smoothiearkisto - Annos</title>
         <meta charset="utf-8" />
     </head>
 
     <body>
-        <h1>Hei <span th:text="${opiskelija.nimi}">opiskelija</span>!</h1>
+        <a th:href="${'/annokset'}">Annoslistaukseen</a>
+        <h1> <span th:text="${annos.nimi}">annos</span></h1>
+        
+        <h3>Raaka-aineet</h3>
 
-        <p>Olet saapunut opiskelijan <span th:text="${opiskelija.nimi}">opiskelija</span> henkilökohtaiselle sivulle.</p>
+        <div>
+            <table>
+                <tr>
+                    <th>Järjestys</th>
+                    <th>Raaka-aine</th>
+                    <th>Määrä</th>
+                    <th>Mittayksikkö</th>
+                    <th>Ohje</th>                    
+                    <th></th>
+                </tr>
+                <tr th:each="annosraakaaine : ${annosraakaaineet}">
+                    <td>
+                        <span th:text="${annosraakaaine.jarjestys}">
+                        </span>
+                    </td>
+                    <td>
+                        <span th:text="${annosraakaaine.raakaaine.nimi}">
+                            raaka-aineen nimi
+                        </span>                     
+                    </td>
+                    <td>
+                        <span th:text="${annosraakaaine.maara}">
+                            maara
+                        </span>                     
+                    </td>
+                    <td>
+                        <span th:text="${annosraakaaine.mittayksikko}">
+                            mittayksikko
+                        </span>                     
+                    </td>                    
+                    <td>
+                        <span th:text="${annosraakaaine.ohje}">
+                            ohje
+                        </span>                     
+                    </td>
+                                        
+                    <td>
+                        <a th:href="${'/annosraakaaine/' + annosraakaaine.id + '/delete/' + annos.id}">(poista)</a>
+                    </td>
+                </tr>
+            </table>    
+            
+  
+        </div>
+        
+        <div>
+            <h3>Lisää raaka-aine</h3>
+            <form th:action="@{~/annosraakaaineet}" method="post">       
+                <input type="hidden" name="annosId" th:value="${annos.id}"></input>
+                <table>
+                    <tr>
+                        <td>
+                            <span>Raaka-aine:</span>                            
+                        </td>
+                        <td>
+                            <select name="raakaAineId">
+                                <option th:each="raakaaine : ${raakaaineet}" th:value="${raakaaine.id}" th:text="${raakaaine.nimi}">
+                                    raaka-aine
+                                </option>
+                            </select>                            
+                        </td>
+                    </tr>                        
+                    <tr>
+                        <td>           
+                            Järjestys
+                        </td>
+                        <td>
+                            <input type="number" required="required" name="jarjestys"></input>
+                        </td>
+                    </tr>                        
+                    <tr>
+                        <td>        
+                            Määrä
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" min="0" required="required" name="maara"></input>
+                        </td>
+                    </tr>                        
+                    <tr>
+                        <td>
+                            Mittayksikkö
+                        </td>
+                        <td>
+                            <input type="text" required="required" name="mittayksikko"></input>
+                        </td>
+                    </tr>                        
+                    <tr>
+                        <td>    
+                            Ohje
+                        </td>
+                        <td>
+                            <textarea name="ohje"></textarea>
+                        </td>                        
+                        
+                    </tr>
+                </table>
+
+
+                <div>
+                </div>
+                
+                
+                
+
+                <div>
+                    <input type="submit" value="Lisää"/>
+                </div>
+            </form>            
+        </div>
+               
     </body>
+    
 </html>

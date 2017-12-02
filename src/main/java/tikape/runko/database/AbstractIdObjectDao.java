@@ -8,23 +8,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import tikape.runko.database.Database;
-import tikape.runko.domain.AbstractNamedObject;
+import tikape.runko.domain.AbstractIdObject;
 
-public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
+public abstract class AbstractIdObjectDao<T extends AbstractIdObject>
         implements Dao<T, Integer> {
 
     protected Database database;
     protected String tableName;
 
-    public AbstractNamedObjectDao(Database database, String tableName) {
+    public AbstractIdObjectDao(Database database, String tableName) {
         this.database = database;
         this.tableName = tableName;
     }
-
+    
     @Override
     public T findOne(Integer key) throws SQLException {
         try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT id, nimi FROM " + tableName + " WHERE id = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + tableName + " WHERE id = ?");
             stmt.setInt(1, key);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -44,7 +44,7 @@ public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
         List<T> items = new ArrayList<>();
 
         try (Connection conn = database.getConnection();
-                ResultSet result = conn.prepareStatement("SELECT id, nimi FROM " + tableName + " ORDER BY nimi ASC").executeQuery()) {
+                ResultSet result = conn.prepareStatement("SELECT * FROM " + tableName + " ").executeQuery()) {
 
             while (result.next()) {
                 items.add(createFromRow(result));
@@ -53,45 +53,9 @@ public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
 
         return items;
     }
-    /*
-    public List<T> findNewestTop(Integer count) throws SQLException {
-        List<T> items = new ArrayList<>();
 
-        try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT id, content, timestamp FROM " + tableName + " ORDER BY timestamp DESC LIMIT ?");
-            stmt.setInt(1, count);
-            ResultSet result = stmt.executeQuery();
-                //ResultSet result = conn.prepareStatement("SELECT id, content, timestamp FROM " + tableName + " ORDER BY timestamp DESC LIMIT ?").executeQuery()) {
-
-            while (result.next()) {
-                items.add(createFromRow(result));
-            }
-        }
-
-        return items;
-    }
-    */
     
-    @Override
-    public T saveOrUpdate(T object) throws SQLException {
-        // simply support saving -- disallow saving if task with 
-        // same name exists
-        T byName = findByName(object.getNimi());
-
-        if (byName != null) {
-            return byName;
-        }
-
-        try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO " + tableName + " (nimi) VALUES (?)");
-            stmt.setString(1, object.getNimi());
-            stmt.executeUpdate();
-        }
-
-        return findByName(object.getNimi());
-
-    }
-
+    
     private T findByName(String name) throws SQLException {
         try (Connection conn = database.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT id, nimi FROM " + tableName + " WHERE nimi = ?");
@@ -105,27 +69,23 @@ public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
                 return createFromRow(result);
             }
         }
+    }       
+
+    
+    @Override
+    public Integer delete(Integer key) throws SQLException {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        
+        try (Connection conn = database.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM " + tableName + " WHERE id = ?");
+            stmt.setInt(1, key);
+            stmt.executeUpdate();
+        }
+
+        return null;
+
     }
     
-    private T findByName(String name, Date timestamp) throws SQLException {
-        try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT id, nimi FROM " + tableName + " WHERE content = ?");
-            stmt.setString(1, name);
-
-            try (ResultSet result = stmt.executeQuery()) {
-                if (!result.next()) {
-                    return null;
-                }
-
-                return createFromRow(result);
-            }
-        }
-    }    
-
-    @Override
-    public void delete(Integer key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     public abstract T createFromRow(ResultSet resultSet) throws SQLException;
 

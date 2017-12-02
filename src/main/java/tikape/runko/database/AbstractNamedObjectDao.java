@@ -53,24 +53,6 @@ public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
 
         return items;
     }
-    /*
-    public List<T> findNewestTop(Integer count) throws SQLException {
-        List<T> items = new ArrayList<>();
-
-        try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT id, content, timestamp FROM " + tableName + " ORDER BY timestamp DESC LIMIT ?");
-            stmt.setInt(1, count);
-            ResultSet result = stmt.executeQuery();
-                //ResultSet result = conn.prepareStatement("SELECT id, content, timestamp FROM " + tableName + " ORDER BY timestamp DESC LIMIT ?").executeQuery()) {
-
-            while (result.next()) {
-                items.add(createFromRow(result));
-            }
-        }
-
-        return items;
-    }
-    */
     
     @Override
     public T saveOrUpdate(T object) throws SQLException {
@@ -105,26 +87,26 @@ public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
                 return createFromRow(result);
             }
         }
-    }
-    
-    private T findByName(String name, Date timestamp) throws SQLException {
-        try (Connection conn = database.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT id, nimi FROM " + tableName + " WHERE content = ?");
-            stmt.setString(1, name);
-
-            try (ResultSet result = stmt.executeQuery()) {
-                if (!result.next()) {
-                    return null;
-                }
-
-                return createFromRow(result);
-            }
-        }
-    }    
+    }   
 
     @Override
-    public void delete(Integer key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Integer delete(Integer key) throws SQLException {
+                
+        //T byName = findOne(key);
+                
+        //if (byName = null) {
+            try (Connection conn = database.getConnection()) {
+                PreparedStatement stmt = conn.prepareStatement("DELETE FROM " + tableName + " WHERE id = ?");
+                stmt.setInt(1, key);
+                stmt.executeUpdate();
+                return 1;
+            }
+        //    return 1;
+        //}
+        //else {
+        //    return 0;            
+        //}        
+
     }
 
     public abstract T createFromRow(ResultSet resultSet) throws SQLException;

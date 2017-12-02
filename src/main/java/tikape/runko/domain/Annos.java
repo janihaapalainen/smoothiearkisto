@@ -1,29 +1,15 @@
 package tikape.runko.domain;
 
-public class Opiskelija {
+import java.sql.Date;
 
-    private Integer id;
-    private String nimi;
 
-    public Opiskelija(Integer id, String nimi) {
-        this.id = id;
-        this.nimi = nimi;
-    }
+public class Annos extends AbstractNamedObject {
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNimi() {
-        return nimi;
-    }
-
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
+    public Thread thread;
+        
+    public Annos(Integer id, String nimi) {
+        super(id, nimi);
     }
 
 }
+

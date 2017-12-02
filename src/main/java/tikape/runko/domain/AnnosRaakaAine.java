@@ -1,29 +1,59 @@
 package tikape.runko.domain;
 
-public class Opiskelija {
+public class AnnosRaakaAine extends AbstractIdObject {
 
-    private Integer id;
-    private String nimi;
+    public Integer jarjestys;
+    public Double maara;
+    public String mittayksikko;
+    public String ohje;
+    public Annos annos;
+    public RaakaAine raakaaine;
+        
+    public AnnosRaakaAine(  Integer id, 
+                            //Integer raaka_aine_id,
+                            //Integer annos_id, 
+                            Integer jarjestys, 
+                            Double maara, 
+                            String mittayksikko, 
+                            String ohje,
+                            Annos annos,
+                            RaakaAine raakaaine) {
+            super(id);
+            //this.annos_id = annos_id;
+            this.jarjestys = jarjestys;
+            this.maara = maara;
+            this.mittayksikko = mittayksikko;
+            this.ohje = ohje;
+            this.annos = annos;
+            this.raakaaine = raakaaine;
+        }
 
-    public Opiskelija(Integer id, String nimi) {
-        this.id = id;
-        this.nimi = nimi;
-    }
+        public Integer getRaakaAineId() {
+            return raakaaine.getId(); // raaka_aine_id;
+        }
 
-    public Integer getId() {
-        return id;
-    }
+        public Integer getAnnosId() {
+            return annos.getId(); //annos_id;
+        }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+        public Integer getJarjestys() {
+            return jarjestys;
+        }
 
-    public String getNimi() {
-        return nimi;
-    }
+        public Double getMaara() {
+            return maara;
+        }
 
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
-    }
+        public String getMittayksikko() {
+            return mittayksikko;
+        }
+        
+        public String getOhje() {
+            return ohje;
+        }
 
-}
+        
+}    
+
+
+

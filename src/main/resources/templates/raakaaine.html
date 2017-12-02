@@ -2,13 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
-        <title>Otsikko</title>
+        <title>Smoothiearkisto - Raaka-aine</title>
         <meta charset="utf-8" />
     </head>
 
     <body>
-        <h1>Hei <span th:text="${opiskelija.nimi}">opiskelija</span>!</h1>
+        <a th:href="${'/raakaaineet'}">Raaka-ainelistaukseen</a>
+        
+        <h1> <span th:text="${raakaaine.nimi}">raaka-aine</span>!</h1>
 
-        <p>Olet saapunut opiskelijan <span th:text="${opiskelija.nimi}">opiskelija</span> henkilökohtaiselle sivulle.</p>
+        <p>Olet saapunut raaka-aineen <span th:text="${raakaaine.nimi}">raaka-aine</span>  sivulle.</p>
     </body>
 </html>

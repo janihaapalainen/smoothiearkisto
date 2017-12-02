@@ -2,17 +2,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
-        <title>Otsikko</title>
+        <title>Smoothiearkisto - Raaka-aineet</title>
         <meta charset="utf-8" />
     </head>
 
     <body>
-        <h1>Hei opiskelijat!</h1>
+        <a th:href="${'/'}">Etusivulle</a>
 
-        <ol>
-            <li th:each="opiskelija: ${opiskelijat}">
-                <span th:text="${opiskelija.nimi}">opiskelijan nimi</span> <a th:href="${'/opiskelijat/' + opiskelija.id}">linkki</a>
-            </li>
-        </ol>
+        <h1>Raaka-aineet</h1>
+
+        <mark><span th:text="${viesti}"></span></mark>
+        
+        <div>
+            <ul>
+                <li th:each="raakaaine : ${raakaaineet}">
+                    <span th:text="${raakaaine.nimi}">
+                        raaka-aineen nimi
+                    </span>                     
+                    <a th:href="${'/raakaaine/' + raakaaine.id + '/delete'}">(poista)</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>Lisää raaka-aine</h3>
+            <form th:action="@{~/raakaaineet}" method="post">       
+                <input type="text" name="nimi"></input>
+                <input type="submit" value="Lisää"/>
+            </form>            
+        </div>
+        
     </body>
 </html>
