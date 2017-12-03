@@ -24,6 +24,7 @@ public class Main {
         AnnosDao annosDao = new AnnosDao(database, "Annos");        
         AnnosRaakaAineDao annosRaakaAineDao = new AnnosRaakaAineDao(database, "AnnosRaakaAine");        
 
+        // etusivu
         get("/", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("viesti", "tervehdys");
@@ -31,15 +32,17 @@ public class Main {
             return new ModelAndView(map, "index");
         }, new ThymeleafTemplateEngine());
 
+        // annoksien katselusivu
         get("/annokset", (req, res) -> {
             String msg = req.queryParams("msg");
             HashMap map = new HashMap<>();
             map.put("annokset", annosDao.findAll());
-            map.put("viesti", msg);
+            map.put("viesti", msg); //mahollinen käyttäjälle näytettävä virhe-viesti, mikäli annosta ei voida poistaa
 
             return new ModelAndView(map, "annokset");
         }, new ThymeleafTemplateEngine());
         
+        // annoksen lisäys
         Spark.post("/annokset", (Request req, Response res) -> {
             Annos annos = new Annos(-1, req.queryParams("nimi"));
             annos = annosDao.saveOrUpdate(annos);
@@ -47,27 +50,28 @@ public class Main {
             return "";
         });        
        
+        // annoksen katselusivu
         get("/annos/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("annos", annosDao.findOne(Integer.parseInt(req.params("id"))));
             map.put("annosraakaaineet", annosRaakaAineDao.findByAnnosId(Integer.parseInt(req.params("id"))));
             map.put("raakaaineet", raakaAineDao.findAll());
-
             return new ModelAndView(map, "annos");
         }, new ThymeleafTemplateEngine());
 
-        // delete
+        // annoksen poisto
         Spark.get("/annos/:id/delete", (req, res) -> {            
             Integer annosId = Integer.parseInt(req.params("id"));
-            Integer result = annosDao.delete(annosId);
+            Integer result = annosDao.delete(annosId); // palautta 0:n mikäli annokseen liittyy annosraakaaineita
             String msg = "";
-            if (result == 0) {
+            if (result == 0) { // jos annosDao.delete palautta 0:n välitetään annokset-katselusivulle viesti käyttäjälle näytettäväksi
                 msg = "?msg=" + "Annosta ei voi poistaa koska siihen liittyy Raaka-aineita";
             }
             res.redirect("/annokset"+msg);
             return "";
         });                
 
+        // raaka-aineiden katselusivu
         get("/raakaaineet", (req, res) -> {
             String msg = req.queryParams("msg");            
             HashMap map = new HashMap<>();
@@ -77,15 +81,7 @@ public class Main {
             return new ModelAndView(map, "raakaaineet");
         }, new ThymeleafTemplateEngine());
 
-        /*
-        get("/raakaaine/:id", (req, res) -> {
-            HashMap map = new HashMap<>();
-            map.put("raakaaine", raakaAineDao.findOne(Integer.parseInt(req.params("id"))));
-
-            return new ModelAndView(map, "raakaaine");
-        }, new ThymeleafTemplateEngine());
-        */
-        
+        // raaka-aineen lisäys
         Spark.post("/raakaaineet", (Request req, Response res) -> {
             RaakaAine raakaAine = new RaakaAine(-1, req.queryParams("nimi"));
             raakaAine = raakaAineDao.saveOrUpdate(raakaAine);
@@ -93,13 +89,12 @@ public class Main {
             return "";
         });        
         
-        // delete
+        // raaka-aineen pisto
         Spark.get("/raakaaine/:id/delete", (req, res) -> {            
             Integer raakaAineId = Integer.parseInt(req.params("id"));
-            Integer result = raakaAineDao.delete(raakaAineId);
-
+            Integer result = raakaAineDao.delete(raakaAineId); // palautta 0:n mikäli raaka-aineeseen liittyy annosraakaaineita
             String msg = "";
-            if (result == 0) {
+            if (result == 0) { // jos raakaAineDao.delete palautta 0:n välitetään raakaaineet-katselusivulle viesti käyttäjälle näytettäväksi
                 msg = "?msg=" + "Raaka-ainetta ei voi poistaa koska siihen liittyy Annoksia";
             }
             res.redirect("/raakaaineet"+msg);
@@ -107,14 +102,12 @@ public class Main {
             return "";
         });                
         
-        /////////
+        // raaka-aineen lisäys annokselle
         Spark.post("/annosraakaaineet", (Request req, Response res) -> {
             Annos annos = annosDao.findOne(Integer.parseInt(req.queryParams("annosId")));
             RaakaAine raakaAine = raakaAineDao.findOne(Integer.parseInt(req.queryParams("raakaAineId")));
             AnnosRaakaAine annosRaakaAine = 
                     new AnnosRaakaAine(-1, 
-                        //Integer.parseInt(req.queryParams("raakaAineId")),
-                        //Integer.parseInt(req.queryParams("annosId")),
                         Integer.parseInt(req.queryParams("jarjestys")),
                         Double.parseDouble(req.queryParams("maara")),
                         req.queryParams("mittayksikko"),
@@ -125,8 +118,9 @@ public class Main {
             annosRaakaAine = annosRaakaAineDao.saveOrUpdate(annosRaakaAine);
             res.redirect("/annos/" + req.queryParams("annosId"));
             return "";
-        });        
-        // delete
+        });      
+        
+        // raaka-aineen poisto annokselta
         Spark.get("/annosraakaaine/:id/delete/:annosid", (req, res) -> {            
             Integer annosRaakaAineId = Integer.parseInt(req.params("id"));
             String annosId = req.params("annosid");
@@ -134,7 +128,6 @@ public class Main {
             res.redirect("/annos/" + annosId);
             return "";
         });                
-        
-        
+                
     }
 }

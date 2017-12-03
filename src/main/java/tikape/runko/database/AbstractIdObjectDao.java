@@ -74,16 +74,13 @@ public abstract class AbstractIdObjectDao<T extends AbstractIdObject>
     
     @Override
     public Integer delete(Integer key) throws SQLException {
-        //throw new UnsupportedOperationException("Not supported yet.");
         
         try (Connection conn = database.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM " + tableName + " WHERE id = ?");
             stmt.setInt(1, key);
             stmt.executeUpdate();
         }
-
-        return null;
-
+        return 1;
     }
     
 

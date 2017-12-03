@@ -92,20 +92,19 @@ public abstract class AbstractNamedObjectDao<T extends AbstractNamedObject>
     @Override
     public Integer delete(Integer key) throws SQLException {
                 
-        //T byName = findOne(key);
+        T byName = findOne(key);
                 
-        //if (byName = null) {
+        if (byName == null) {
             try (Connection conn = database.getConnection()) {
                 PreparedStatement stmt = conn.prepareStatement("DELETE FROM " + tableName + " WHERE id = ?");
                 stmt.setInt(1, key);
                 stmt.executeUpdate();
-                return 1;
             }
-        //    return 1;
-        //}
-        //else {
-        //    return 0;            
-        //}        
+            return 1;
+        }
+        else {
+            return 0;            
+        }        
 
     }
 

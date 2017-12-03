@@ -17,8 +17,7 @@ public class AnnosRaakaAineDao extends AbstractIdObjectDao<AnnosRaakaAine> {
     }
     
     public AnnosRaakaAine saveOrUpdate(AnnosRaakaAine object) throws SQLException {
-        // simply support saving -- disallow saving if task with 
-        // same name exists
+
         AnnosRaakaAine byId = findOne(object.getId());
 
         if (byId != null) {

@@ -10,8 +10,6 @@ public class AnnosRaakaAine extends AbstractIdObject {
     public RaakaAine raakaaine;
         
     public AnnosRaakaAine(  Integer id, 
-                            //Integer raaka_aine_id,
-                            //Integer annos_id, 
                             Integer jarjestys, 
                             Double maara, 
                             String mittayksikko, 
@@ -19,7 +17,6 @@ public class AnnosRaakaAine extends AbstractIdObject {
                             Annos annos,
                             RaakaAine raakaaine) {
             super(id);
-            //this.annos_id = annos_id;
             this.jarjestys = jarjestys;
             this.maara = maara;
             this.mittayksikko = mittayksikko;
@@ -29,11 +26,11 @@ public class AnnosRaakaAine extends AbstractIdObject {
         }
 
         public Integer getRaakaAineId() {
-            return raakaaine.getId(); // raaka_aine_id;
+            return raakaaine.getId(); 
         }
 
         public Integer getAnnosId() {
-            return annos.getId(); //annos_id;
+            return annos.getId(); 
         }
 
         public Integer getJarjestys() {
